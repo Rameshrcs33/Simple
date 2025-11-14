@@ -112,6 +112,14 @@ export default function LoginScreen() {
               containerStyle={styles.input}
             />
 
+            <View style={styles.forgotPasswordContainer}>
+              <Link href="/forgotpass" asChild>
+                <Button mode="text" compact textColor="#6200EE">
+                  Forgot Password?
+                </Button>
+              </Link>
+            </View>
+
             <PrimaryButton
               label="Login"
               onPress={handleLogin}
@@ -199,6 +207,10 @@ const styles = ScaledSheet.create({
   signupButton: {
     margin: 0,
     padding: 0,
+  },
+  forgotPasswordContainer: {
+    alignItems: "flex-end",
+    marginBottom: "16@vs",
   },
   errorText: {
     color: "#B00020",
