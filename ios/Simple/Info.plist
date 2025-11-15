@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Location Permissions for Mapbox -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need access to your location to display it on the map</string>
+    
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need access to your location to display it on the map</string>
+    
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We need access to your location to display it on the map</string>
+    
+    <!-- Camera Permission (optional, for future use) -->
+    <key>NSCameraUsageDescription</key>
+    <string>We need camera access for taking photos</string>
+    
+    <!-- Minimum iOS Version -->
+    <key>MinimumOSVersion</key>
+    <string>13.0</string>
+    
+    <!-- Mapbox access token (replace with your own) -->
+    <key>MGLMapboxAccessToken</key>
+    <string>pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycW1nMGtjeGt4YTIifQ.rJcFIG214AriISLbB6B6HA</string>
+    
+</dict>
+</plist>
