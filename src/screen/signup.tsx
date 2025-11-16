@@ -22,7 +22,7 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showDobPicker, setShowDobPicker] = useState(false);
-  const [dobDate, setDobDate] = useState<Date | null>(null);
+
   const [touched, setTouched] = useState<{
     firstName?: boolean;
     lastName?: boolean;
@@ -244,7 +244,8 @@ export default function SignupScreen() {
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      // Navigate to login or handle success
+      // After successful signup, navigate to the Login screen
+      navigation.navigate("Login");
     }, 1000);
   };
 
@@ -382,20 +383,29 @@ export default function SignupScreen() {
                 <TextInput.Icon
                   icon="calendar-month"
                   onPress={() => {
-                    const initial = parseDobToDate(dob) ?? new Date(2000, 0, 1);
-                    setDobDate(initial);
+                    // Open native date picker dialog/modal
+                    setTouched((prev) => ({ ...prev, dob: true }));
                     setShowDobPicker(true);
                   }}
                   forceTextInputFocus={false}
                 />
               }
             />
+            {/** Use native DateTimePicker for a consistent, attractive UI */}
 
             {showDobPicker && (
               <DateTimePicker
-                value={dobDate ?? parseDobToDate(dob) ?? new Date(2000, 0, 1)}
+                // Use dobDate if the user is interacting, otherwise use parsed DOB
+                // or current date so the picker isn't pinned to a single year.
+                value={parseDobToDate(dob) ?? new Date()}
                 mode="date"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
+                // Use the spinner display so users can quickly change year/month/day
+                // on Android and iOS. Some device pickers restrict navigation in
+                // calendar view; spinner exposes the year wheel reliably.
+                display={"spinner"}
+                // Allow selecting historical dates (e.g., 1980s). Some platforms
+                // impose implicit minimums — set an explicit minimum far in the past.
+                minimumDate={new Date(1900, 0, 1)}
                 maximumDate={new Date()}
                 onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
                   if (Platform.OS === "android") {
@@ -408,7 +418,6 @@ export default function SignupScreen() {
                     setShowDobPicker(false);
                   } else {
                     if (selectedDate) {
-                      setDobDate(selectedDate);
                       const formatted = formatDateDDMMYYYY(selectedDate);
                       setDob(formatted);
                       setTouched((prev) => ({ ...prev, dob: true }));
@@ -488,7 +497,13 @@ export default function SignupScreen() {
               <Text variant="bodyMedium" style={styles.loginText}>
                 Already have an account?{" "}
               </Text>
-              <Button mode="text" compact style={styles.loginButton} textColor="#6200EE" onPress={() => navigation.navigate('Login', {})}>
+              <Button
+                mode="text"
+                compact
+                style={styles.loginButton}
+                textColor="#6200EE"
+                onPress={() => navigation.navigate("Login", {})}
+              >
                 Login
               </Button>
             </View>
