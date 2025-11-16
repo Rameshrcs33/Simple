@@ -1,16 +1,17 @@
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { Link } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button, Surface, Text, TextInput } from "react-native-paper";
 import { ScaledSheet } from "react-native-size-matters";
-import CustomTextInput from "../components/common/CustomTextInput";
-import PrimaryButton from "../components/common/PrimaryButton";
+import CustomTextInput from "../components/CustomTextInput";
+import PrimaryButton from "../components/PrimaryButton";
 
 export default function SignupScreen() {
+  const navigation: any = useNavigation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -487,16 +488,9 @@ export default function SignupScreen() {
               <Text variant="bodyMedium" style={styles.loginText}>
                 Already have an account?{" "}
               </Text>
-              <Link href="/login" asChild>
-                <Button
-                  mode="text"
-                  compact
-                  style={styles.loginButton}
-                  textColor="#6200EE"
-                >
-                  Login
-                </Button>
-              </Link>
+              <Button mode="text" compact style={styles.loginButton} textColor="#6200EE" onPress={() => navigation.navigate('Login', {})}>
+                Login
+              </Button>
             </View>
           </View>
         </Surface>

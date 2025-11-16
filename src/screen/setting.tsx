@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { IconButton, List, Switch, Text } from "react-native-paper";
 import { ScaledSheet } from "react-native-size-matters";
-import colors from "../../utils/colors";
+import colors from "../utils/colors";
 
 export default function SettingsScreen() {
   const navigation: any = useNavigation();

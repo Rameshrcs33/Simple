@@ -11,8 +11,8 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 import { ScaledSheet } from "react-native-size-matters";
-import AppToolbar from "../../components/common/AppToolbar";
-import { colors, getColorForString, getReadableTextColor } from "../../utils/colors";
+import AppToolbar from "../components/AppToolbar";
+import { colors, getColorForString, getReadableTextColor } from "../utils/colors";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 

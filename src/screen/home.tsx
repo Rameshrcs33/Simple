@@ -10,16 +10,16 @@ import {
   useTheme,
   Button,
 } from "react-native-paper";
-import AppToolbar from "../../../components/common/AppToolbar";
+import AppToolbar from "../components/AppToolbar";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useWishlist } from "../../context/WishlistContext";
+import { useWishlist } from "../context/WishlistContext";
 import { ScaledSheet } from "react-native-size-matters";
 import {
   colors,
   getColorForString,
   getReadableTextColor,
-} from "../../../utils/colors";
-import { useCart } from "../../context/CartContext";
+} from "../utils/colors";
+import { useCart } from "../context/CartContext";
 
 type Product = {
   id: string;

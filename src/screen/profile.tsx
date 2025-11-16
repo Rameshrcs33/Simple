@@ -1,13 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { Avatar, Button, IconButton, Text } from "react-native-paper";
 import { ScaledSheet } from "react-native-size-matters";
-import colors from "../../../utils/colors";
+import colors from "../utils/colors";
 
 export default function ProfileScreen() {
-  const router = useRouter();
   const navigation: any = useNavigation();
   return (
     <View style={styles.container}>
@@ -34,8 +32,7 @@ export default function ProfileScreen() {
         textColor={colors.textPrimary}
         icon="logout"
         onPress={() => {
-          // Navigate back to login screen on logout
-          router.replace("/login");
+          navigation.reset({ index: 0, routes: [{ name: "Login" }] });
         }}
       >
         Log Out

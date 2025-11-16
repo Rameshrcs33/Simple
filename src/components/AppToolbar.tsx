@@ -3,10 +3,10 @@ import { Appbar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { View, Text as RNText } from "react-native";
-import { useCart } from "../../app/context/CartContext";
-import { useWishlist } from "../../app/context/WishlistContext";
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { ScaledSheet } from "react-native-size-matters";
-import { colors } from "../../utils/colors";
+import { colors } from "../utils/colors";
 
 type Props = {
     title?: string;
@@ -49,7 +49,7 @@ export default function AppToolbar({
                             <Badge value={wishlistCount} />
                         </View>
                     )}
-                    onPress={() => navigation.navigate("wishlist")}
+                    onPress={() => navigation.navigate("Wishlist")}
                 />
             )}
 
@@ -61,7 +61,7 @@ export default function AppToolbar({
                             <Badge value={cartCount} />
                         </View>
                     )}
-                    onPress={() => navigation.navigate("cart")}
+                    onPress={() => navigation.navigate("Tabs", { screen: "Cart" })}
                 />
             )}
 
@@ -70,7 +70,7 @@ export default function AppToolbar({
                     icon={(props) => (
                         <MaterialIcons name="home-filled" size={props.size ?? 24} color={props.color} />
                     )}
-                    onPress={() => navigation.navigate("home")}
+                    onPress={() => navigation.navigate("Tabs", { screen: "Home" })}
                 />
             )}
         </Appbar.Header>

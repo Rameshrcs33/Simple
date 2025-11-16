@@ -1,4 +1,4 @@
-import { Link, useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -16,7 +16,7 @@ export default function ForgotPasswordScreen() {
   const [emailError, setEmailError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
+  const navigation: any = useNavigation();
 
   const validateEmail = (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -147,7 +147,7 @@ export default function ForgotPasswordScreen() {
               {/* Back to Login Button */}
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => router.push("/login")}
+                onPress={() => navigation.navigate('Login', {})}
                 activeOpacity={0.8}
               >
                 <Text style={styles.buttonText}>
@@ -163,13 +163,9 @@ export default function ForgotPasswordScreen() {
               <Text style={styles.footerText}>
                 Remember your password?{" "}
               </Text>
-              <Link href="/login" asChild>
-                <TouchableOpacity>
-                  <Text style={styles.footerLinkText}>
-                    Sign In
-                  </Text>
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity onPress={() => navigation.navigate('Login', {})}>
+                <Text style={styles.footerLinkText}>Sign In</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>

@@ -18,11 +18,11 @@ import {
     Surface,
     Text,
 } from "react-native-paper";
-import AppToolbar from "../../../components/common/AppToolbar";
+import AppToolbar from "../components/AppToolbar";
 import { ScaledSheet } from "react-native-size-matters";
-import { colors, getColorForString, getReadableTextColor } from "../../../utils/colors";
-import { useCart } from "../../context/CartContext";
-import { useOrders } from "../../context/OrdersContext";
+import { colors, getColorForString, getReadableTextColor } from "../utils/colors";
+import { useCart } from "../context/CartContext";
+import { useOrders } from "../context/OrdersContext";
 
 type CartItem = {
     id: string;

@@ -1,10 +1,10 @@
-import { Link, useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { Button, Surface, Text, TextInput } from "react-native-paper";
 import { ScaledSheet } from "react-native-size-matters";
-import CustomTextInput from "../components/common/CustomTextInput";
-import PrimaryButton from "../components/common/PrimaryButton";
+import CustomTextInput from "../components/CustomTextInput";
+import PrimaryButton from "../components/PrimaryButton";
 import { AuthError, dummyLogin } from "../services/auth";
 
 export default function LoginScreen() {
@@ -15,7 +15,7 @@ export default function LoginScreen() {
   const [passwordError, setPasswordError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const router = useRouter();
+  const navigation: any = useNavigation();
 
   const handleLogin = async () => {
     // Reset errors
@@ -45,7 +45,9 @@ export default function LoginScreen() {
     try {
       const res = await dummyLogin(username, password);
       console.log("Login success:", res);
-      router.replace("/(drawer)/(tabs)/home");
+      // Navigate to the app's main tabs after successful login.
+      // 'Main' route does not exist; the correct route is 'Tabs' defined in `MainStack`.
+      navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
     } catch (e) {
       const message =
         e instanceof AuthError ? e.message : "Something went wrong. Try again.";
@@ -113,11 +115,9 @@ export default function LoginScreen() {
             />
 
             <View style={styles.forgotPasswordContainer}>
-              <Link href="/forgotpass" asChild>
-                <Button mode="text" compact textColor="#6200EE">
-                  Forgot Password?
-                </Button>
-              </Link>
+              <Button mode="text" compact textColor="#6200EE" onPress={() => navigation.navigate('ForgotPass', {})}>
+                Forgot Password?
+              </Button>
             </View>
 
             <PrimaryButton
@@ -137,16 +137,9 @@ export default function LoginScreen() {
               <Text variant="bodyMedium" style={styles.signupText}>
                 Don't have an account?{" "}
               </Text>
-              <Link href="/signup" asChild>
-                <Button
-                  mode="text"
-                  compact
-                  style={styles.signupButton}
-                  textColor="#6200EE"
-                >
-                  Sign Up
-                </Button>
-              </Link>
+              <Button mode="text" compact style={styles.signupButton} textColor="#6200EE" onPress={() => navigation.navigate('Signup', {})}>
+                Sign Up
+              </Button>
             </View>
           </View>
         </Surface>

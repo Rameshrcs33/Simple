@@ -2,9 +2,9 @@ import React from "react";
 import { FlatList, View } from "react-native";
 import { Avatar, Button, Card, Dialog, Portal, Surface, Text, TouchableRipple } from "react-native-paper";
 import { ScaledSheet } from "react-native-size-matters";
-import AppToolbar from "../../../components/common/AppToolbar";
-import { colors, getColorForString, getReadableTextColor } from "../../../utils/colors";
-import { useOrders } from "../../context/OrdersContext";
+import AppToolbar from "../components/AppToolbar";
+import { colors, getColorForString, getReadableTextColor } from "../utils/colors";
+import { useOrders } from "../context/OrdersContext";
 
 export default function OrdersScreen() {
     const { orders } = useOrders();

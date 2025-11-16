@@ -3,7 +3,6 @@ import {
   DrawerContentScrollView,
   DrawerItem,
 } from "@react-navigation/drawer";
-import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { Avatar, Button, Divider, Text, useTheme } from "react-native-paper";
@@ -12,7 +11,6 @@ import colors from "./colors";
 
 export default function CustomDrawer(props: DrawerContentComponentProps) {
   const theme = useTheme();
-  const router = useRouter();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
@@ -48,14 +46,22 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
             <DrawerItem
               label="Home"
               onPress={() => {
-                router.navigate("/(drawer)/(tabs)/home");
+                // Navigate into the Drawer -> Dashboard -> MainStack -> Tabs -> Home
+                props.navigation.navigate("Dashboard", {
+                  screen: "Tabs",
+                  params: { screen: "Home" },
+                });
                 props.navigation.closeDrawer();
               }}
             />
             <DrawerItem
               label="Profile"
               onPress={() => {
-                router.navigate("/(drawer)/(tabs)/profile");
+                // Navigate into the Drawer -> Dashboard -> MainStack -> Tabs -> Profile
+                props.navigation.navigate("Dashboard", {
+                  screen: "Tabs",
+                  params: { screen: "Profile" },
+                });
                 props.navigation.closeDrawer();
               }}
             />
@@ -63,7 +69,8 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
             <DrawerItem
               label="Settings"
               onPress={() => {
-                router.navigate("/(drawer)/setting");
+                // Settings is a screen in MainStack; navigate via Dashboard
+                props.navigation.navigate("Dashboard", { screen: "Settings" });
                 props.navigation.closeDrawer();
               }}
             />
@@ -74,7 +81,16 @@ export default function CustomDrawer(props: DrawerContentComponentProps) {
               mode="text"
               icon="logout"
               onPress={() => {
-                router.replace("/login");
+                // Reset to the Login screen inside the Drawer -> Dashboard -> MainStack
+                props.navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: "Dashboard",
+                      state: { routes: [{ name: "Login" }] },
+                    },
+                  ],
+                });
               }}
               textColor={theme.colors.error}
               contentStyle={styles.footerButtonContent}
