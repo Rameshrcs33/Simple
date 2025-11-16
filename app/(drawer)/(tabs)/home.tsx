@@ -2,19 +2,24 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useMemo } from "react";
 import { FlatList, View } from "react-native";
 import {
-    Avatar,
-    Card,
-    Chip,
-    IconButton,
-    Text,
-    useTheme,
+  Avatar,
+  Card,
+  Chip,
+  IconButton,
+  Text,
+  useTheme,
+  Button,
 } from "react-native-paper";
+import AppToolbar from "../../../components/common/AppToolbar";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useWishlist } from "../../context/WishlistContext";
 import { ScaledSheet } from "react-native-size-matters";
 import {
-    colors,
-    getColorForString,
-    getReadableTextColor,
+  colors,
+  getColorForString,
+  getReadableTextColor,
 } from "../../../utils/colors";
+import { useCart } from "../../context/CartContext";
 
 type Product = {
   id: string;
@@ -79,6 +84,8 @@ const DUMMY_PRODUCTS: Product[] = [
 export default function HomeScreen() {
   const theme = useTheme();
   const navigation: any = useNavigation();
+  const { addToCart, items: cartItems, removeItem, changeQty } = useCart();
+  const { contains, toggle } = useWishlist();
   const containerStyle = useMemo(
     () => [{ backgroundColor: colors.background }, styles.container],
     []
@@ -86,16 +93,7 @@ export default function HomeScreen() {
 
   return (
     <View style={containerStyle}>
-      <View style={styles.headerRow}>
-        <IconButton
-          icon="menu"
-          onPress={() => navigation.openDrawer()}
-          size={24}
-        />
-        <Text variant="headlineSmall" style={styles.title}>
-          Products
-        </Text>
-      </View>
+      <AppToolbar title="Products" />
       <FlatList
         data={DUMMY_PRODUCTS}
         keyExtractor={(item) => item.id}
@@ -118,6 +116,18 @@ export default function HomeScreen() {
                     icon="cart"
                   />
                 )}
+                right={(props) => {
+                  const inWishlist = contains(item.id);
+                  return (
+                    <IconButton
+                      {...props}
+                      onPress={() => toggle({ id: item.id, name: item.name, price: item.price, category: item.category })}
+                      icon={(p) => (
+                        <MaterialIcons name={inWishlist ? "favorite" : "favorite-border"} size={p.size ?? 24} color={inWishlist ? colors.error : p.color} />
+                      )}
+                    />
+                  );
+                }}
               />
               <Card.Content>
                 <Chip
@@ -127,6 +137,43 @@ export default function HomeScreen() {
                 >
                   {item.category}
                 </Chip>
+                <Card.Actions>
+                  {(() => {
+                    const cartItem = cartItems.find((c) => c.id === item.id);
+                    if (cartItem) {
+                      return (
+                        <View style={styles.actionRow}>
+                          <View style={styles.qtyControls}>
+                            <IconButton
+                              icon="minus"
+                              size={20}
+                              onPress={() => changeQty(item.id, cartItem.qty - 1)}
+                            />
+                            <Text style={styles.qtyNumber}>{cartItem.qty}</Text>
+                            <IconButton
+                              icon="plus"
+                              size={20}
+                              onPress={() => changeQty(item.id, cartItem.qty + 1)}
+                            />
+                          </View>
+                          <Button
+                            mode="outlined"
+                            onPress={() => removeItem(item.id)}
+                            style={{ borderColor: colors.error }}
+                            labelStyle={{ color: colors.error }}
+                          >
+                            Remove
+                          </Button>
+                        </View>
+                      );
+                    }
+                    return (
+                      <Button mode="contained" onPress={() => addToCart({ id: item.id, name: item.name, price: item.price, category: item.category })}>
+                        Add to cart
+                      </Button>
+                    );
+                  })()}
+                </Card.Actions>
               </Card.Content>
             </Card>
           );
@@ -162,7 +209,11 @@ const styles = ScaledSheet.create({
     marginTop: "8@vs",
     alignSelf: "flex-start",
   },
+  actionRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: "8@vs" },
+  qtyControls: { flexDirection: "row", alignItems: "center" },
+  qtyNumber: { minWidth: "24@s", textAlign: "center", fontWeight: "600" },
   separator: {
     height: "8@vs",
   },
 });
+

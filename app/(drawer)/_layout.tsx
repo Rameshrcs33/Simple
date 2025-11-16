@@ -24,6 +24,8 @@ export default function DrawerLayout() {
     >
       <Drawer.Screen name="(tabs)" options={{ title: "Home" }} />
       <Drawer.Screen name="setting" options={{ title: "Settings" }} />
+      <Drawer.Screen name="wishlist" options={{ title: "Wish List" }} />
+
     </Drawer>
   );
 }

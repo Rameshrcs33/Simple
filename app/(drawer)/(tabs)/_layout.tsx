@@ -2,9 +2,13 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { useTheme } from "react-native-paper";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 export default function TabsLayout() {
 	const theme = useTheme();
+	const { count: cartCount } = useCart();
+	const { count: wishlistCount } = useWishlist();
 
 	return (
 		<Tabs
@@ -27,15 +31,28 @@ export default function TabsLayout() {
 					),
 				}}
 			/>
+
 			<Tabs.Screen
-				name="map"
+				name="cart"
 				options={{
-					title: "Map",
+					title: "Cart",
 					tabBarIcon: ({ color, size }) => (
-						<MaterialIcons name="map" size={size} color={color} />
+						<MaterialIcons name="shopping-cart" size={size} color={color} />
+					),
+					tabBarBadge: cartCount > 0 ? cartCount : undefined,
+				}}
+			/>
+
+			<Tabs.Screen
+				name="orders"
+				options={{
+					title: "Orders",
+					tabBarIcon: ({ color, size }) => (
+						<MaterialIcons name="receipt-long" size={size} color={color} />
 					),
 				}}
 			/>
+
 			<Tabs.Screen
 				name="profile"
 				options={{
@@ -48,5 +65,3 @@ export default function TabsLayout() {
 		</Tabs>
 	);
 }
-
-
