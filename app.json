@@ -20,8 +20,10 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "We need access to your location to display it on the map",
         "NSLocationAlwaysUsageDescription": "We need access to your location to display it on the map",
         "NSCameraUsageDescription": "We need camera access for taking photos",
-        "MinimumOSVersion": "13.0"
-      }
+        "MinimumOSVersion": "13.0",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.simple.learning"
     },
     "android": {
       "adaptiveIcon": {

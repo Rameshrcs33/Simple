@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ScaledSheet } from "react-native-size-matters";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -54,27 +55,22 @@ export default function ForgotPasswordScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView
-        className="flex-1"
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          paddingHorizontal: 20,
-          paddingVertical: 32,
-        }}
+        style={styles.scrollContent}
+        contentContainerStyle={styles.scrollContentContainer}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="bg-white rounded-2xl p-6 shadow-lg">
+        <View style={styles.card}>
           {/* Header */}
-          <View className="items-center mb-8">
-            <Text className="text-3xl font-bold text-gray-900 mb-2">
+          <View style={styles.header}>
+            <Text style={styles.title}>
               Forgot Password?
             </Text>
-            <Text className="text-base text-gray-600 text-center px-4">
+            <Text style={styles.subtitle}>
               {success
                 ? "We've sent a password reset link to your email address."
                 : "Enter your email address and we'll send you a link to reset your password."}
@@ -84,20 +80,19 @@ export default function ForgotPasswordScreen() {
           {!success ? (
             <>
               {/* Email Input */}
-              <View className="mb-6">
-                <Text className="text-sm font-medium text-gray-700 mb-2 ml-1">
+              <View style={styles.formSection}>
+                <Text style={styles.label}>
                   Email Address
                 </Text>
                 <View
-                  className={`flex-row items-center border-2 rounded-xl px-4 py-3 bg-gray-50 ${
-                    emailError
-                      ? "border-red-500"
-                      : "border-gray-300 focus:border-purple-600"
-                  }`}
+                  style={[
+                    styles.inputContainer,
+                    emailError && styles.inputContainerError,
+                  ]}
                 >
-                  <Text className="text-gray-400 mr-2">✉</Text>
+                  <Text style={styles.icon}>✉</Text>
                   <TextInput
-                    className="flex-1 text-base text-gray-900"
+                    style={styles.input}
                     placeholder="Enter your email"
                     placeholderTextColor="#9CA3AF"
                     value={email}
@@ -112,7 +107,7 @@ export default function ForgotPasswordScreen() {
                   />
                 </View>
                 {emailError && (
-                  <Text className="text-sm text-red-500 mt-1 ml-1">
+                  <Text style={styles.errorMessage}>
                     Please enter a valid email address
                   </Text>
                 )}
@@ -120,14 +115,15 @@ export default function ForgotPasswordScreen() {
 
               {/* Reset Button */}
               <TouchableOpacity
-                className={`bg-purple-600 rounded-xl py-4 px-6 mb-4 ${
-                  loading ? "opacity-50" : ""
-                }`}
+                style={[
+                  styles.button,
+                  loading && styles.buttonDisabled,
+                ]}
                 onPress={handleResetPassword}
                 disabled={loading}
                 activeOpacity={0.8}
               >
-                <Text className="text-white text-center text-base font-semibold">
+                <Text style={styles.buttonText}>
                   {loading ? "Sending..." : "Send Reset Link"}
                 </Text>
               </TouchableOpacity>
@@ -135,14 +131,14 @@ export default function ForgotPasswordScreen() {
           ) : (
             <>
               {/* Success Message */}
-              <View className="items-center mb-6">
-                <View className="bg-green-100 rounded-full p-4 mb-4">
-                  <Text className="text-4xl">✓</Text>
+              <View style={styles.successContainer}>
+                <View style={styles.successBadge}>
+                  <Text style={styles.successIcon}>✓</Text>
                 </View>
-                <Text className="text-lg font-semibold text-gray-900 mb-2">
+                <Text style={styles.successTitle}>
                   Check Your Email
                 </Text>
-                <Text className="text-sm text-gray-600 text-center">
+                <Text style={styles.successMessage}>
                   Please check your inbox and follow the instructions to reset
                   your password.
                 </Text>
@@ -150,11 +146,11 @@ export default function ForgotPasswordScreen() {
 
               {/* Back to Login Button */}
               <TouchableOpacity
-                className="bg-purple-600 rounded-xl py-4 px-6 mb-4"
+                style={styles.button}
                 onPress={() => router.push("/login")}
                 activeOpacity={0.8}
               >
-                <Text className="text-white text-center text-base font-semibold">
+                <Text style={styles.buttonText}>
                   Back to Login
                 </Text>
               </TouchableOpacity>
@@ -163,13 +159,13 @@ export default function ForgotPasswordScreen() {
 
           {/* Back to Login Link */}
           {!success && (
-            <View className="flex-row justify-center items-center mt-4">
-              <Text className="text-gray-600 text-base">
+            <View style={styles.footerLink}>
+              <Text style={styles.footerText}>
                 Remember your password?{" "}
               </Text>
               <Link href="/login" asChild>
                 <TouchableOpacity>
-                  <Text className="text-purple-600 text-base font-semibold">
+                  <Text style={styles.footerLinkText}>
                     Sign In
                   </Text>
                 </TouchableOpacity>
@@ -181,3 +177,142 @@ export default function ForgotPasswordScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = ScaledSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: "20@s",
+    paddingVertical: "32@vs",
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: "16@ms",
+    paddingHorizontal: "24@s",
+    paddingVertical: "24@vs",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: "8@ms",
+    elevation: 4,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: "32@vs",
+  },
+  title: {
+    fontSize: "28@ms",
+    fontWeight: "bold",
+    color: "#1f2937",
+    marginBottom: "8@vs",
+  },
+  subtitle: {
+    fontSize: "16@ms",
+    color: "#4b5563",
+    textAlign: "center",
+    paddingHorizontal: "16@s",
+  },
+  formSection: {
+    marginBottom: "24@vs",
+  },
+  label: {
+    fontSize: "14@ms",
+    fontWeight: "600",
+    color: "#374151",
+    marginBottom: "8@vs",
+    marginLeft: "4@s",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: "2@ms",
+    borderColor: "#d1d5db",
+    borderRadius: "12@ms",
+    paddingHorizontal: "16@s",
+    paddingVertical: "12@vs",
+    backgroundColor: "#f9fafb",
+  },
+  inputContainerError: {
+    borderColor: "#ef4444",
+  },
+  icon: {
+    color: "#9ca3af",
+    marginRight: "8@s",
+  },
+  input: {
+    flex: 1,
+    fontSize: "16@ms",
+    color: "#1f2937",
+  },
+  errorMessage: {
+    fontSize: "14@ms",
+    color: "#ef4444",
+    marginTop: "4@vs",
+    marginLeft: "4@s",
+  },
+  button: {
+    backgroundColor: "#7c3aed",
+    borderRadius: "12@ms",
+    paddingVertical: "16@vs",
+    paddingHorizontal: "24@s",
+    marginBottom: "16@vs",
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    color: "#ffffff",
+    textAlign: "center",
+    fontSize: "16@ms",
+    fontWeight: "600",
+  },
+  successContainer: {
+    alignItems: "center",
+    marginBottom: "24@vs",
+  },
+  successBadge: {
+    backgroundColor: "#dcfce7",
+    borderRadius: "50@ms",
+    width: "80@s",
+    height: "80@s",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: "16@vs",
+  },
+  successIcon: {
+    fontSize: "36@ms",
+  },
+  successTitle: {
+    fontSize: "18@ms",
+    fontWeight: "600",
+    color: "#1f2937",
+    marginBottom: "8@vs",
+  },
+  successMessage: {
+    fontSize: "14@ms",
+    color: "#4b5563",
+    textAlign: "center",
+  },
+  footerLink: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "16@vs",
+  },
+  footerText: {
+    color: "#4b5563",
+    fontSize: "16@ms",
+  },
+  footerLinkText: {
+    color: "#7c3aed",
+    fontSize: "16@ms",
+    fontWeight: "600",
+  },
+});

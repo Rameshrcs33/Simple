@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { paperTheme } from "../utils/colors";
-import "../global.css";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { OrdersProvider } from "./context/OrdersContext";
