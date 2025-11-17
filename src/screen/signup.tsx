@@ -1,126 +1,50 @@
+import React, { useState } from "react";
+import { Platform, View, KeyboardAvoidingView, ScrollView } from "react-native";
+import { ScaledSheet } from "react-native-size-matters";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { Text, Button, TextInput } from "react-native-paper";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Button, Surface, Text, TextInput } from "react-native-paper";
-import { ScaledSheet } from "react-native-size-matters";
 import CustomTextInput from "../components/CustomTextInput";
 import PrimaryButton from "../components/PrimaryButton";
 
+const formatDateDDMMYYYY = (date: Date) => {
+  const d = date.getDate().toString().padStart(2, "0");
+  const m = (date.getMonth() + 1).toString().padStart(2, "0");
+  const y = date.getFullYear().toString();
+  return `${d}-${m}-${y}`;
+};
+
 export default function SignupScreen() {
   const navigation: any = useNavigation();
+
+  // form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobile, setMobile] = useState("");
   const [gender, setGender] = useState<string | null>(null);
-  const [dob, setDob] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showDobPicker, setShowDobPicker] = useState(false);
-
-  const [touched, setTouched] = useState<{
-    firstName?: boolean;
-    lastName?: boolean;
-    mobile?: boolean;
-    gender?: boolean;
-    dob?: boolean;
-    email?: boolean;
-    password?: boolean;
-    confirmPassword?: boolean;
-  }>({});
-
-  const [errors, setErrors] = useState<{
-    firstName?: string;
-    lastName?: string;
-    mobile?: string;
-    gender?: string;
-    dob?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-  }>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [genderOpen, setGenderOpen] = useState(false);
-  const genderItems = [
+  const [genderItems, setGenderItems] = useState([
     { label: "Male", value: "Male" },
     { label: "Female", value: "Female" },
     { label: "Other", value: "Other" },
-  ];
+  ]);
 
-  const validateFirstName = (value: string) => {
-    if (!value || value.trim().length === 0) return "First name is required";
-    if (value.trim().length < 2)
-      return "First name must be at least 2 characters";
-    return "";
-  };
+  const [dob, setDob] = useState("");
+  const [pickerDate, setPickerDate] = useState<Date>(new Date());
+  const [showDobPicker, setShowDobPicker] = useState(false);
 
-  const validateLastName = (value: string) => {
-    if (!value || value.trim().length === 0) return "Last name is required";
-    if (value.trim().length < 2)
-      return "Last name must be at least 2 characters";
-    return "";
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const validateMobile = (value: string) => {
-    if (!value) return "Mobile is required";
-    const digits = value.replace(/\D/g, "");
-    if (digits.length < 10 || digits.length > 15)
-      return "Enter a valid mobile number";
-    return "";
-  };
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const validateGender = (value: string | null) => {
-    if (!value || value.trim().length === 0) return "Gender is required";
-    const normalized = value.trim().toLowerCase();
-    const allowed = ["male", "female", "other"];
-    if (!allowed.includes(normalized))
-      return "Gender must be Male, Female, or Other";
-    return "";
-  };
-
-  const validateDob = (value: string) => {
-    if (!value) return "Date of birth is required";
-    // Expecting DD-MM-YYYY
-    const m = value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-    if (!m) return "Use format DD-MM-YYYY";
-    const day = Number(m[1]);
-    const month = Number(m[2]);
-    const year = Number(m[3]);
-    const date = new Date(Date.UTC(year, month - 1, day));
-    if (
-      isNaN(date.getTime()) ||
-      date.getUTCMonth() + 1 !== month ||
-      date.getUTCDate() !== day
-    ) {
-      return "Enter a valid date";
-    }
-    // Optional: minimum age 13
-    const today = new Date();
-    const thirteenYearsMs = 13 * 365.25 * 24 * 60 * 60 * 1000;
-    if (today.getTime() - date.getTime() < thirteenYearsMs)
-      return "Must be at least 13 years old";
-    return "";
-  };
-
-  const validateEmail = (value: string) => {
-    if (!value) return "Email is required";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return "Enter a valid email address";
-    return "";
-  };
-
-  const formatDateDDMMYYYY = (date: Date) => {
-    const d = date.getDate().toString().padStart(2, "0");
-    const m = (date.getMonth() + 1).toString().padStart(2, "0");
-    const y = date.getFullYear().toString();
-    return `${d}-${m}-${y}`;
-  };
+  const [touched, setTouched] = useState<any>({});
+  const [errors, setErrors] = useState<any>({});
 
   const parseDobToDate = (value: string): Date | null => {
     const m = value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
@@ -132,37 +56,74 @@ export default function SignupScreen() {
     return isNaN(date.getTime()) ? null : date;
   };
 
-  const validatePassword = (value: string) => {
-    if (!value) return "Password is required";
-    if (value.length < 8) return "Password must be at least 8 characters";
-    if (!/[A-Z]/.test(value)) return "Include at least one uppercase letter";
-    if (!/[a-z]/.test(value)) return "Include at least one lowercase letter";
-    if (!/[0-9]/.test(value)) return "Include at least one number";
-    if (!/[!@#$%^&*(),.?":{}|<>_\-\[\]\\\/;'+=~`]/.test(value))
+  const validateFirstName = (v: string) => {
+    if (!v || v.trim().length === 0) return "First name is required";
+    if (v.trim().length < 2) return "First name must be at least 2 characters";
+    return "";
+  };
+
+  const validateLastName = (v: string) => {
+    if (!v || v.trim().length === 0) return "Last name is required";
+    if (v.trim().length < 2) return "Last name must be at least 2 characters";
+    return "";
+  };
+
+  const validateMobile = (v: string) => {
+    if (!v) return "Mobile is required";
+    const digits = v.replace(/\D/g, "");
+    if (digits.length < 10 || digits.length > 15)
+      return "Enter a valid mobile number";
+    return "";
+  };
+
+  const validateGender = (v: string | null) => {
+    if (!v || v.trim().length === 0) return "Gender is required";
+    return "";
+  };
+
+  const validateDob = (v: string) => {
+    if (!v) return "Date of birth is required";
+    const m = v.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+    if (!m) return "Use format DD-MM-YYYY";
+    const day = Number(m[1]);
+    const month = Number(m[2]);
+    const year = Number(m[3]);
+    const date = new Date(year, month - 1, day);
+    if (isNaN(date.getTime())) return "Enter a valid date";
+    const today = new Date();
+    const minAgeMs = 13 * 365.25 * 24 * 60 * 60 * 1000;
+    if (today.getTime() - date.getTime() < minAgeMs)
+      return "Must be at least 13 years old";
+    return "";
+  };
+
+  const validateEmail = (v: string) => {
+    if (!v) return "Email is required";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(v)) return "Enter a valid email address";
+    return "";
+  };
+
+  const validatePassword = (v: string) => {
+    if (!v) return "Password is required";
+    if (v.length < 8) return "Password must be at least 8 characters";
+    if (!/[A-Z]/.test(v)) return "Include at least one uppercase letter";
+    if (!/[a-z]/.test(v)) return "Include at least one lowercase letter";
+    if (!/[0-9]/.test(v)) return "Include at least one number";
+    if (!/[!@#$%^&*(),.?":{}|<>_\-\[\]\\\/;'+=~`]/.test(v))
       return "Include at least one special character";
     return "";
   };
 
-  const validateConfirmPassword = (value: string, pwd: string) => {
-    if (!value) return "Please confirm your password";
-    if (value !== pwd) return "Passwords do not match";
+  const validateConfirmPassword = (v: string, pwd: string) => {
+    if (!v) return "Please confirm your password";
+    if (v !== pwd) return "Passwords do not match";
     return "";
   };
 
-  const runValidation = (
-    fields?: Array<
-      | "firstName"
-      | "lastName"
-      | "mobile"
-      | "gender"
-      | "dob"
-      | "email"
-      | "password"
-      | "confirmPassword"
-    >
-  ) => {
-    const nextErrors = { ...errors };
-    const fieldsToValidate = fields ?? [
+  const runValidation = (fields?: string[]) => {
+    const nextErrors: any = { ...errors };
+    const toValidate = fields ?? [
       "firstName",
       "lastName",
       "mobile",
@@ -173,39 +134,29 @@ export default function SignupScreen() {
       "confirmPassword",
     ];
 
-    if (fieldsToValidate.includes("firstName")) {
+    if (toValidate.includes("firstName"))
       nextErrors.firstName = validateFirstName(firstName) || undefined;
-    }
-    if (fieldsToValidate.includes("lastName")) {
+    if (toValidate.includes("lastName"))
       nextErrors.lastName = validateLastName(lastName) || undefined;
-    }
-    if (fieldsToValidate.includes("mobile")) {
+    if (toValidate.includes("mobile"))
       nextErrors.mobile = validateMobile(mobile) || undefined;
-    }
-    if (fieldsToValidate.includes("gender")) {
+    if (toValidate.includes("gender"))
       nextErrors.gender = validateGender(gender) || undefined;
-    }
-    if (fieldsToValidate.includes("dob")) {
+    if (toValidate.includes("dob"))
       nextErrors.dob = validateDob(dob) || undefined;
-    }
-    if (fieldsToValidate.includes("email")) {
+    if (toValidate.includes("email"))
       nextErrors.email = validateEmail(email) || undefined;
-    }
-    if (fieldsToValidate.includes("password")) {
+    if (toValidate.includes("password"))
       nextErrors.password = validatePassword(password) || undefined;
-    }
-    if (fieldsToValidate.includes("confirmPassword")) {
+    if (toValidate.includes("confirmPassword"))
       nextErrors.confirmPassword =
         validateConfirmPassword(confirmPassword, password) || undefined;
-    }
 
     setErrors(nextErrors);
     return nextErrors;
   };
 
   const handleSignup = () => {
-    // Validate all before submit
-    const allErrors = runValidation();
     setTouched({
       firstName: true,
       lastName: true,
@@ -216,403 +167,306 @@ export default function SignupScreen() {
       password: true,
       confirmPassword: true,
     });
+    const all = runValidation();
     if (
-      allErrors.firstName ||
-      allErrors.lastName ||
-      allErrors.mobile ||
-      allErrors.gender ||
-      allErrors.dob ||
-      allErrors.email ||
-      allErrors.password ||
-      allErrors.confirmPassword
-    ) {
+      all.firstName ||
+      all.lastName ||
+      all.mobile ||
+      all.gender ||
+      all.dob ||
+      all.email ||
+      all.password ||
+      all.confirmPassword
+    )
       return;
-    }
 
-    // Handle signup logic here
-    setLoading(true);
-    console.log("Signup attempted:", {
-      firstName,
-      lastName,
-      mobile,
-      gender,
-      dob,
-      email,
-      password,
-    });
-
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      // After successful signup, navigate to the Login screen
-      navigation.navigate("Login");
-    }, 1000);
+    // Submit or navigate
+    navigation.navigate("Login");
   };
 
-  const handleBlur = (
-    field:
-      | "firstName"
-      | "lastName"
-      | "mobile"
-      | "gender"
-      | "dob"
-      | "email"
-      | "password"
-      | "confirmPassword"
-  ) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    runValidation([field]);
+  const onDobChange = (event: DateTimePickerEvent, selected?: Date) => {
+    if (Platform.OS === "android") {
+      // Android closes picker automatically
+      if (event.type === "dismissed") {
+        setShowDobPicker(false);
+        return;
+      }
+      if (event.type === "set" && selected) {
+        setPickerDate(selected);
+        const formatted = formatDateDDMMYYYY(selected);
+        setDob(formatted);
+        setTouched((p: any) => ({ ...p, dob: true }));
+        runValidation(["dob"]);
+      }
+      setShowDobPicker(false);
+    } else {
+      if (selected) {
+        setPickerDate(selected);
+        const formatted = formatDateDDMMYYYY(selected);
+        setDob(formatted);
+        setTouched((p: any) => ({ ...p, dob: true }));
+        runValidation(["dob"]);
+      }
+    }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Surface style={styles.surface} elevation={2}>
+        <View style={styles.card}>
           <Text variant="headlineMedium" style={styles.title}>
             Create Account
           </Text>
           <Text variant="bodyMedium" style={styles.subtitle}>
-            Sign up to get started
+            Fill in your details
           </Text>
 
-          <View style={styles.form}>
-            <CustomTextInput
-              label="First name"
-              value={firstName}
-              onChangeText={setFirstName}
-              onBlur={() => handleBlur("firstName")}
-              autoCapitalize="words"
-              autoCorrect={false}
-              leftIcon="account-outline"
-              containerStyle={styles.input}
-              error={!!(touched.firstName && errors.firstName)}
-              errorMessage={touched.firstName ? errors.firstName : ""}
-            />
+          <CustomTextInput
+            label="First name"
+            value={firstName}
+            onChangeText={setFirstName}
+            onBlur={() => {
+              setTouched((p: any) => ({ ...p, firstName: true }));
+              runValidation(["firstName"]);
+            }}
+            containerStyle={styles.input}
+            leftIcon="account-outline"
+            error={!!(touched.firstName && errors.firstName)}
+            errorMessage={touched.firstName ? errors.firstName : ""}
+          />
 
-            <CustomTextInput
-              label="Last name"
-              value={lastName}
-              onChangeText={setLastName}
-              onBlur={() => handleBlur("lastName")}
-              autoCapitalize="words"
-              autoCorrect={false}
-              leftIcon="account"
-              containerStyle={styles.input}
-              error={!!(touched.lastName && errors.lastName)}
-              errorMessage={touched.lastName ? errors.lastName : ""}
-            />
+          <CustomTextInput
+            label="Last name"
+            value={lastName}
+            onChangeText={setLastName}
+            onBlur={() => {
+              setTouched((p: any) => ({ ...p, lastName: true }));
+              runValidation(["lastName"]);
+            }}
+            containerStyle={styles.input}
+            leftIcon="account"
+            error={!!(touched.lastName && errors.lastName)}
+            errorMessage={touched.lastName ? errors.lastName : ""}
+          />
 
-            <CustomTextInput
-              label="Mobile"
-              value={mobile}
-              onChangeText={setMobile}
-              onBlur={() => handleBlur("mobile")}
-              keyboardType="phone-pad"
-              autoCapitalize="none"
-              autoCorrect={false}
-              leftIcon="phone"
-              containerStyle={styles.input}
-              error={!!(touched.mobile && errors.mobile)}
-              errorMessage={touched.mobile ? errors.mobile : ""}
+          <View style={styles.dropdownWrapper}>
+            <Text variant="bodySmall" style={styles.dropdownLabelText}>
+              Gender
+            </Text>
+            <DropDownPicker
+              open={genderOpen}
+              value={gender}
+              items={genderItems}
+              setOpen={setGenderOpen}
+              setValue={setGender}
+              onChangeValue={(value: string | null) => {
+                setTouched((p: any) => ({ ...p, gender: true }));
+                const err = validateGender(value);
+                setErrors((prev: any) => ({
+                  ...prev,
+                  gender: err || undefined,
+                }));
+              }}
+              setItems={setGenderItems}
+              placeholder="Select Gender"
+              placeholderStyle={styles.dropdownPlaceholder}
+              style={[
+                styles.dropdown,
+                touched.gender && errors.gender ? styles.dropdownError : {},
+              ]}
+              dropDownContainerStyle={styles.dropdownList}
+              textStyle={styles.dropdownText}
+              labelStyle={styles.dropdownItemLabel}
+              selectedItemLabelStyle={styles.dropdownSelectedLabel}
+              listMode="FLATLIST"
+              flatListProps={{ nestedScrollEnabled: true }}
+              onOpen={() => setTouched((p: any) => ({ ...p, gender: true }))}
             />
-
-            <View style={styles.dropdownWrapper}>
-              <Text variant={"bodySmall"} style={styles.dropdownLabelText}>
-                Gender
+            {touched.gender && errors.gender && (
+              <Text variant="bodySmall" style={styles.dropdownErrorText}>
+                {errors.gender}
               </Text>
-              <DropDownPicker
-                open={genderOpen}
-                value={gender}
-                items={genderItems}
-                setOpen={setGenderOpen}
-                setValue={setGender}
-                onChangeValue={(value: string | null) => {
-                  setTouched((prev) => ({ ...prev, gender: true }));
-                  // Validate with the new value
-                  const error = validateGender(value);
-                  setErrors((prev) => ({
-                    ...prev,
-                    gender: error || undefined,
-                  }));
+            )}
+          </View>
+
+          <CustomTextInput
+            label="Mobile"
+            value={mobile}
+            onChangeText={setMobile}
+            onBlur={() => {
+              setTouched((p: any) => ({ ...p, mobile: true }));
+              runValidation(["mobile"]);
+            }}
+            containerStyle={styles.input}
+            keyboardType="phone-pad"
+            leftIcon="phone"
+            error={!!(touched.mobile && errors.mobile)}
+            errorMessage={touched.mobile ? errors.mobile : ""}
+          />
+
+          <CustomTextInput
+            label="Date of Birth (DD-MM-YYYY)"
+            value={dob}
+            editable={false}
+            containerStyle={styles.input}
+            leftIcon="calendar"
+            right={
+              <TextInput.Icon
+                icon="calendar"
+                onPress={() => {
+                  setTouched((p: any) => ({ ...p, dob: true }));
+                  setShowDobPicker(true);
                 }}
-                placeholder="Select Gender"
-                placeholderStyle={styles.dropdownPlaceholder}
-                style={[
-                  styles.dropdown,
-                  touched.gender && errors.gender ? styles.dropdownError : {},
-                ]}
-                dropDownContainerStyle={styles.dropdownList}
-                textStyle={styles.dropdownText}
-                labelStyle={styles.dropdownItemLabel}
-                selectedItemLabelStyle={styles.dropdownSelectedLabel}
-                listMode="FLATLIST"
-                flatListProps={{
-                  nestedScrollEnabled: true,
-                }}
-                onOpen={() => {
-                  setTouched((prev) => ({ ...prev, gender: true }));
-                }}
+                forceTextInputFocus={false}
               />
-              {touched.gender && errors.gender && (
-                <Text variant="bodySmall" style={styles.dropdownErrorText}>
-                  {errors.gender}
-                </Text>
+            }
+            error={!!(touched.dob && errors.dob)}
+            errorMessage={touched.dob ? errors.dob : ""}
+          />
+
+          {showDobPicker && (
+            <View style={styles.pickerContainer}>
+              <DateTimePicker
+                value={parseDobToDate(dob) ?? pickerDate}
+                mode="date"
+                display={Platform.OS === "android" ? "calendar" : "spinner"}
+                onChange={onDobChange}
+                maximumDate={new Date()}
+                minimumDate={new Date(1900, 0, 1)}
+              />
+              {Platform.OS === "ios" && (
+                <Button mode="text" onPress={() => setShowDobPicker(false)}>
+                  Done
+                </Button>
               )}
             </View>
+          )}
 
-            <CustomTextInput
-              label="Date of Birth (DD-MM-YYYY)"
-              value={dob}
-              onChangeText={setDob}
-              onBlur={() => handleBlur("dob")}
-              autoCapitalize="none"
-              autoCorrect={false}
-              leftIcon="calendar"
-              containerStyle={styles.input}
-              error={!!(touched.dob && errors.dob)}
-              errorMessage={touched.dob ? errors.dob : ""}
-              editable={false}
-              right={
-                <TextInput.Icon
-                  icon="calendar-month"
-                  onPress={() => {
-                    // Open native date picker dialog/modal
-                    setTouched((prev) => ({ ...prev, dob: true }));
-                    setShowDobPicker(true);
-                  }}
-                  forceTextInputFocus={false}
-                />
-              }
-            />
-            {/** Use native DateTimePicker for a consistent, attractive UI */}
+          <CustomTextInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            onBlur={() => {
+              setTouched((p: any) => ({ ...p, email: true }));
+              runValidation(["email"]);
+            }}
+            containerStyle={styles.input}
+            keyboardType="email-address"
+            leftIcon="email"
+            error={!!(touched.email && errors.email)}
+            errorMessage={touched.email ? errors.email : ""}
+          />
 
-            {showDobPicker && (
-              <DateTimePicker
-                // Use dobDate if the user is interacting, otherwise use parsed DOB
-                // or current date so the picker isn't pinned to a single year.
-                value={parseDobToDate(dob) ?? new Date()}
-                mode="date"
-                // Use the spinner display so users can quickly change year/month/day
-                // on Android and iOS. Some device pickers restrict navigation in
-                // calendar view; spinner exposes the year wheel reliably.
-                display={"spinner"}
-                // Allow selecting historical dates (e.g., 1980s). Some platforms
-                // impose implicit minimums — set an explicit minimum far in the past.
-                minimumDate={new Date(1900, 0, 1)}
-                maximumDate={new Date()}
-                onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-                  if (Platform.OS === "android") {
-                    if (event.type === "set" && selectedDate) {
-                      const formatted = formatDateDDMMYYYY(selectedDate);
-                      setDob(formatted);
-                      setTouched((prev) => ({ ...prev, dob: true }));
-                      runValidation(["dob"]);
-                    }
-                    setShowDobPicker(false);
-                  } else {
-                    if (selectedDate) {
-                      const formatted = formatDateDDMMYYYY(selectedDate);
-                      setDob(formatted);
-                      setTouched((prev) => ({ ...prev, dob: true }));
-                      runValidation(["dob"]);
-                    }
-                  }
-                }}
+          <CustomTextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            onBlur={() => {
+              setTouched((p: any) => ({ ...p, password: true }));
+              runValidation(["password"]);
+            }}
+            secureTextEntry={!showPassword}
+            containerStyle={styles.input}
+            leftIcon="lock"
+            right={
+              <TextInput.Icon
+                icon={showPassword ? "eye-off" : "eye"}
+                onPress={() => setShowPassword((s) => !s)}
+                forceTextInputFocus={false}
               />
-            )}
+            }
+            error={!!(touched.password && errors.password)}
+            errorMessage={touched.password ? errors.password : ""}
+          />
 
-            <CustomTextInput
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-              onBlur={() => handleBlur("email")}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-              leftIcon="email"
-              containerStyle={styles.input}
-              error={!!(touched.email && errors.email)}
-              errorMessage={touched.email ? errors.email : ""}
-            />
+          <CustomTextInput
+            label="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            onBlur={() => {
+              setTouched((p: any) => ({ ...p, confirmPassword: true }));
+              runValidation(["confirmPassword"]);
+            }}
+            secureTextEntry={!showConfirmPassword}
+            containerStyle={styles.input}
+            leftIcon="lock-check"
+            right={
+              <TextInput.Icon
+                icon={showConfirmPassword ? "eye-off" : "eye"}
+                onPress={() => setShowConfirmPassword((s) => !s)}
+                forceTextInputFocus={false}
+              />
+            }
+            error={!!(touched.confirmPassword && errors.confirmPassword)}
+            errorMessage={touched.confirmPassword ? errors.confirmPassword : ""}
+          />
 
-            <CustomTextInput
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              onBlur={() => handleBlur("password")}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-              leftIcon="lock"
-              containerStyle={styles.input}
-              error={!!(touched.password && errors.password)}
-              errorMessage={touched.password ? errors.password : ""}
-              right={
-                <TextInput.Icon
-                  icon={showPassword ? "eye-off" : "eye"}
-                  onPress={() => setShowPassword((prev) => !prev)}
-                  forceTextInputFocus={false}
-                />
-              }
-            />
+          <PrimaryButton label="Sign Up" onPress={handleSignup} />
 
-            <CustomTextInput
-              label="Confirm Password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              onBlur={() => handleBlur("confirmPassword")}
-              secureTextEntry={!showConfirmPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-              leftIcon="lock-check"
-              containerStyle={styles.input}
-              error={!!(touched.confirmPassword && errors.confirmPassword)}
-              errorMessage={
-                touched.confirmPassword ? errors.confirmPassword : ""
-              }
-              right={
-                <TextInput.Icon
-                  icon={showConfirmPassword ? "eye-off" : "eye"}
-                  onPress={() => setShowConfirmPassword((prev) => !prev)}
-                  forceTextInputFocus={false}
-                />
-              }
-            />
-
-            <PrimaryButton
-              label="Sign Up"
-              onPress={handleSignup}
-              loading={loading}
-              disabled={loading}
-            />
-
-            <View style={styles.loginContainer}>
-              <Text variant="bodyMedium" style={styles.loginText}>
-                Already have an account?{" "}
-              </Text>
-              <Button
-                mode="text"
-                compact
-                style={styles.loginButton}
-                textColor="#6200EE"
-                onPress={() => navigation.navigate("Login", {})}
-              >
-                Login
-              </Button>
-            </View>
+          <View style={styles.loginContainer}>
+            <Text variant="bodyMedium" style={styles.loginText}>
+              Already have an account?{" "}
+            </Text>
+            <Button
+              mode="text"
+              compact
+              style={styles.loginButton}
+              textColor="#6200EE"
+              onPress={() => navigation.navigate("Login")}
+            >
+              Login
+            </Button>
           </View>
-        </Surface>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: "20@s",
-  },
-  surface: {
-    padding: "24@s",
-    borderRadius: "16@ms",
-    backgroundColor: "#ffffff",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: "8@vs",
-    fontWeight: "bold",
-    color: "#212121",
-  },
-  subtitle: {
-    textAlign: "center",
-    marginBottom: "32@vs",
-    color: "#757575",
-  },
-  form: {
-    width: "100%",
-  },
-  input: {
-    marginBottom: "16@vs",
-  },
-  signupButton: {
-    marginTop: "8@vs",
-    marginBottom: "16@vs",
-    paddingVertical: "4@vs",
-  },
-  buttonContent: {
-    paddingVertical: "8@vs",
-  },
-  loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "8@vs",
-  },
-  loginText: {
-    color: "#757575",
-  },
-  loginButton: {
-    margin: 0,
-    padding: 0,
-  },
-  dropdownWrapper: {
-    marginBottom: "16@vs",
-    zIndex: 3000,
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
+  content: { flexGrow: 1, justifyContent: "center", padding: "20@s" },
+  card: { backgroundColor: "#fff", padding: "20@s", borderRadius: "12@ms" },
+  title: { textAlign: "center", marginBottom: "6@vs", fontWeight: "700" },
+  subtitle: { textAlign: "center", marginBottom: "16@vs", color: "#666" },
+  input: { marginBottom: "12@vs" },
+  pickerContainer: { marginBottom: "16@vs" },
+  dropdownWrapper: { marginBottom: "12@vs", zIndex: 5000 },
   dropdownLabelText: {
     fontSize: "13@ms",
-    marginBottom: "8@vs",
-    marginLeft: "4@s",
+    marginBottom: "6@vs",
     color: "#424242",
-    fontWeight: "500",
+    marginLeft: "4@s",
   },
   dropdown: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
     borderColor: "#BDBDBD",
     borderWidth: 1,
-    borderRadius: 4,
-    minHeight: 56,
-    paddingHorizontal: 12,
+    borderRadius: "4@ms",
+    minHeight: "56@vs",
+    paddingHorizontal: "12@s",
   },
-  dropdownError: {
-    borderColor: "#B00020",
-    borderWidth: 2,
-  },
-  dropdownPlaceholder: {
-    color: "#9E9E9E",
-    fontSize: "13@ms",
-  },
-  dropdownText: {
-    fontSize: "13@ms",
-    color: "#212121",
-  },
-  dropdownItemLabel: {
-    fontSize: "13@ms",
-    color: "#212121",
-  },
+  dropdownError: { borderColor: "#B00020", borderWidth: 2 },
+  dropdownPlaceholder: { color: "#9E9E9E" },
+  dropdownText: { fontSize: "13@ms", color: "#212121" },
+  dropdownItemLabel: { fontSize: "13@ms", color: "#212121" },
   dropdownSelectedLabel: {
     fontWeight: "600",
     color: "#212121",
     fontSize: "13@ms",
   },
   dropdownList: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
     borderColor: "#BDBDBD",
     borderWidth: 1,
-    borderRadius: 4,
-    marginTop: 4,
+    borderRadius: "4@ms",
+    marginTop: "4@vs",
     maxHeight: 200,
   },
   dropdownErrorText: {
@@ -621,4 +475,12 @@ const styles = ScaledSheet.create({
     marginLeft: "12@s",
     fontSize: "12@ms",
   },
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "12@vs",
+  },
+  loginText: { color: "#757575" },
+  loginButton: { margin: 0, padding: 0 },
 });
