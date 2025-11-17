@@ -68,7 +68,6 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Surface style={styles.surface} elevation={2}>
-          <Text>Hello Ramesh</Text>
           <Text variant="headlineMedium" style={styles.title}>
             Welcome Back
           </Text>
