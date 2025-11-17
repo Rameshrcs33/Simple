@@ -1,8 +1,8 @@
-import ForgotPasswordScreen from "@/screen/forgotpass";
-import LoginScreen from "@/screen/login";
-import SettingsScreen from "@/screen/setting";
-import SignupScreen from "@/screen/signup";
-import WishlistScreen from "@/screen/wishlist";
+import ForgotPasswordScreen from "../screen/forgotpass";
+import LoginScreen from "../screen/login";
+import SettingsScreen from "../screen/setting";
+import SignupScreen from "../screen/signup";
+import WishlistScreen from "../screen/wishlist";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import TabsNavigator from "./TabsNavigator";

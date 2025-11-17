@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 
-import CartScreen from "@/screen/cart";
-import HomeScreen from "@/screen/home";
-import OrdersScreen from "@/screen/orders";
-import ProfileScreen from "@/screen/profile";
+import CartScreen from "../screen/cart";
+import HomeScreen from "../screen/home";
+import OrdersScreen from "../screen/orders";
+import ProfileScreen from "../screen/profile";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
@@ -27,7 +27,7 @@ const TabsNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: any) => (
             <MaterialIcons name="home-filled" size={size} color={color} />
           ),
         }}
@@ -36,7 +36,7 @@ const TabsNavigator = () => {
         name="Cart"
         component={CartScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: any) => (
             <MaterialIcons name="shopping-cart" size={size} color={color} />
           ),
         }}
@@ -45,7 +45,7 @@ const TabsNavigator = () => {
         name="Orders"
         component={OrdersScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: any) => (
             <MaterialIcons name="receipt-long" size={size} color={color} />
           ),
         }}
@@ -54,7 +54,7 @@ const TabsNavigator = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: any) => (
             <Ionicons name="person-circle" size={size} color={color} />
           ),
         }}
