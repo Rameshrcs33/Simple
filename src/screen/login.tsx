@@ -1,11 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { Button, Surface, Text, TextInput } from "react-native-paper";
-import { ScaledSheet } from "react-native-size-matters";
+import { ms, ScaledSheet } from "react-native-size-matters";
 import CustomTextInput from "../components/CustomTextInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { AuthError, dummyLogin } from "../services/auth";
+import { sayHello } from "@/MyNativeModule";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -16,6 +17,13 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const navigation: any = useNavigation();
+
+  useEffect(() => {
+    sayHello().then((ms) => {
+      console.log("Native module says:", ms);
+    });
+    console.log("heelo helo")
+  }, []);
 
   const handleLogin = async () => {
     // Reset errors
@@ -115,7 +123,12 @@ export default function LoginScreen() {
             />
 
             <View style={styles.forgotPasswordContainer}>
-              <Button mode="text" compact textColor="#6200EE" onPress={() => navigation.navigate('ForgotPass', {})}>
+              <Button
+                mode="text"
+                compact
+                textColor="#6200EE"
+                onPress={() => navigation.navigate("ForgotPass", {})}
+              >
                 Forgot Password?
               </Button>
             </View>
@@ -137,7 +150,13 @@ export default function LoginScreen() {
               <Text variant="bodyMedium" style={styles.signupText}>
                 Don't have an account?{" "}
               </Text>
-              <Button mode="text" compact style={styles.signupButton} textColor="#6200EE" onPress={() => navigation.navigate('Signup', {})}>
+              <Button
+                mode="text"
+                compact
+                style={styles.signupButton}
+                textColor="#6200EE"
+                onPress={() => navigation.navigate("Signup", {})}
+              >
                 Sign Up
               </Button>
             </View>

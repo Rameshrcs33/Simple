@@ -23,7 +23,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ],
+, "plugins/withMyNativeModule.js"  ],
   "exclude": [
     "node_modules",
     "babel.config.js",

@@ -46,7 +46,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-web-browser"
+      "expo-web-browser",
+      "./plugins/withMyNativeModule"
     ],
     "experiments": {
       "typedRoutes": true
